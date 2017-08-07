@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="android.example.com.nttaxi.view.RegisterActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="56dp">
+
+
+        <EditText
+            android:id="@+id/txt_name"
+            style="@style/RegisterStyle"
+            android:layout_marginBottom="@dimen/loginActvityMargin"
+            android:hint="@string/name_text_hint"
+            android:inputType="textCapWords" />
+
+        <EditText
+            android:id="@+id/txt_phone_number"
+            style="@style/RegisterStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/loginActvityMargin"
+            android:hint="@string/phoneNumber_text_hint"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/txt_email"
+            style="@style/RegisterStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/loginActvityMargin"
+            android:hint="@string/email_text_hint"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/txt_password"
+            style="@style/RegisterStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:layout_marginBottom="@dimen/loginActvityMargin"
+            android:inputType="textPassword" />
+
+        <!-- Signup Button -->
+        <Button
+            android:id="@+id/btn_signup"
+            style="@style/LoginRegisterButton"
+            android:text="Create Account"
+            android:onClick="register"/>
+
+        <TextView
+            android:id="@+id/link_login"
+            style="@style/RegisterStyle"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="@string/Already_a_member_Login"
+            android:onClick="openLoginActivity"/>
+
+    </LinearLayout>
+</ScrollView>
