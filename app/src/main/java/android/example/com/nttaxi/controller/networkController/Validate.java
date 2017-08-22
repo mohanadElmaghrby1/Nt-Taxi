@@ -15,27 +15,25 @@ public class Validate {
 
     public static boolean checkRegisterUserDate(String name , String phone , String email , String password , Context context){
 
-        boolean isCorrect=true;
-
         // /check if email is isCorrect
         if (!Validate.name(name)){
             //show a info message
             Toast.makeText(context, "Please Insert Correct Email",Toast.LENGTH_LONG).show();
-            isCorrect = false;
+            return false;
         }
 
         //check if phone number is isCorrect
         if (!Validate.phone(phone)){
             //show a info message
             Toast.makeText(context, "Please Insert Correct Phone Number",Toast.LENGTH_LONG).show();
-            isCorrect = false;
+            return false;
         }
 
         //check if email is isCorrect
         if (!Validate.email(email)){
             //show a info message
             Toast.makeText(context, "Please Insert Correct Email",Toast.LENGTH_LONG).show();
-            isCorrect = false;
+            return false;
         }
 
 
@@ -43,10 +41,10 @@ public class Validate {
         if (!Validate.password(password)){
             //show a info message
             Toast.makeText(context, "Please Insert a Password More Than 4 characters",Toast.LENGTH_LONG).show();
-            isCorrect = false;
+            return false;
         }
 
-        return  isCorrect;
+        return  true;
 
     }
     
@@ -67,7 +65,7 @@ public class Validate {
      * @return
      */
     public static boolean phone (String phone){
-        return phone.matches("01[012][0-9]+") && phone.length()==11;
+        return phone!=null&&phone.matches("01[012][0-9]+") && phone.length()==11;
     }
 
     /**

@@ -8,4 +8,5 @@
     <dimen name="loginImagHeight">150dp</dimen>
     <dimen name="loginActvityMargin">24dp</dimen>
     <dimen name="registerActivity_margin_views">8dp</dimen>
+    <dimen name="splashActivity_car_height">300dp</dimen>
 </resources>

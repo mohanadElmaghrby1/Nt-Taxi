@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,17 +20,17 @@ import java.util.Map;
 
 public class BaseRequest {
 
-    private static final String LOG_TAG="BaseRequest";
+    private static final String LOG_TAG = "BaseRequest";
 
     /**
      * request tha api with GET method
-     * @param url : API URL
-     * @param context :  application context
-     * @param paramas : the GEt paramas
+     *
+     * @param url      : API URL
+     * @param context  :  application context
      * @param callBack : the interface callback to notify
      */
-    static void doGet (String url, Context context , final HashMap<String , String> paramas , final RequestCallBack callBack){
-       //show progress dialog
+    static void doGet(String url, Context context,final RequestCallBack callBack) {
+        //show progress dialog
         //progess dialgo
         final ProgressDialog pDialog;
         // Showing progress dialog before sending http request
@@ -41,46 +42,41 @@ public class BaseRequest {
 
         // Request a string response
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>(){
+                new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //notify callback for success
                         callBack.success(response);
-                        Log.v(LOG_TAG, response);
+                        Log.v(LOG_TAG,response+"jjj");
 
                         //dismiss the progress dialog
                         pDialog.dismiss();
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(LOG_TAG, error.toString());
+                        Log.v(LOG_TAG,error.toString()+"jjj");
 
                         //dismiss the progress dialog
                         pDialog.dismiss();
                     }
                 }
-        ) {
-            @Override
-            protected Map<String, String> getParams()
-            {
-                return paramas;
-            }
-        };
+        )
+        ;
         // Add the request to the queue
         Volley.newRequestQueue(context).add(stringRequest);
     }
 
     /**
      * request tha api with Post method
-     * @param url : API URL
-     * @param context :  application context
-     * @param paramas : the POST method paramas
+     *
+     * @param url      : API URL
+     * @param context  :  application context
+     * @param paramas  : the POST method paramas
      * @param callBack : the interface callback to notify
      */
-    static void doPost (String url , Context context, final HashMap<String , String> paramas , final RequestCallBack callBack){
+    static void doPost(String url, Context context, final HashMap<String, String> paramas, final RequestCallBack callBack) {
 
         //show progress dialog
         //progess dialgo
@@ -95,50 +91,40 @@ public class BaseRequest {
 
         // Request a string response
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>(){
+                new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //if user logged in call back success method
-                        // else call back error method
-                        if (isUserLoggedIn(response))
-                            callBack.success(response);
-                        else
-                            callBack.error(new Exception("not logged"));
 
-                        Log.i("Response",response);
+                        callBack.success(response);
+                        Log.i("Response", response);
                         //dismiss the progress dialog
                         pDialog.dismiss();
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
                         callBack.error(error);
-                        Log.e("Error.Response", error+"");
+                        Log.e("Error.Response", error + "");
                         //dismiss the progress dialog
                         pDialog.dismiss();
                     }
                 }
-        ) {
+        )
+        {
             @Override
-            protected Map<String, String> getParams()
-            {
+            protected Map<String, String> getParams() {
                 return paramas;
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
 // Add the request to the queue
         Volley.newRequestQueue(context).add(stringRequest);
     }
 
-    /**
-     * check if the user successfully logged in
-     * @param response : the server response
-     * @return : true if successfully logged in and false if not
-     */
-    private static boolean isUserLoggedIn(String response){
-        return response.contains("\"success\":1");
-    }
 }

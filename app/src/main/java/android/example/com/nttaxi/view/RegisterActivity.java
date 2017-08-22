@@ -5,12 +5,21 @@ import android.example.com.nttaxi.R;
 import android.example.com.nttaxi.controller.networkController.RequestCallBack;
 import android.example.com.nttaxi.controller.networkController.Service;
 import android.example.com.nttaxi.controller.networkController.Validate;
+import android.example.com.nttaxi.model.Info;
+import android.example.com.nttaxi.model.RootObject;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 public class RegisterActivity extends BaseActivity implements RequestCallBack {
+
+    /** the Log Tag*/
+    private static String LOG_TAG= RegisterActivity.class.getName();
 
     /** the  register user name */
     private EditText etxt_name;
@@ -86,16 +95,44 @@ public class RegisterActivity extends BaseActivity implements RequestCallBack {
      */
     @Override
     public void success(String response) {
-        //show a info message
-        Toast.makeText(this, "You have been successfully Registered ",Toast.LENGTH_SHORT).show();
-        //launch application if logged in
-        launchApplication();
+
+        RootObject<Info> baseObject = new Gson().fromJson(response ,new TypeToken<RootObject<Info>>(){}.getType());
+        /*
+        get login success if it equal 1 >> successfully login
+                           else is equal 0>> email or password not found
+         */
+        int loginResult =baseObject.getSuccess();
+        Log.v(LOG_TAG,String.valueOf(loginResult));
+
+        /**
+         * check if user successfully logged in
+         */
+        if (loginResult==1){
+
+            //getting the name of logged user
+            String loggedUserName=baseObject.getInfo().get(0).getName();
+
+            //cash user token
+            Info.setUSerCashedToken(this,baseObject.getInfo().get(0).getToken().toString());
+
+            //show a info message
+            Toast.makeText(this, getString(R.string.successfullu_registerd),Toast.LENGTH_LONG).show();
+
+            //launch application if logged in
+            launchApplication();
+        }
+
+        else if (loginResult==0 &&baseObject.getMessage().equals("already registered")){
+            //show a info message
+            Toast.makeText(this, getString(R.string.register_email_already_used),Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     @Override
     public void error(Exception exc) {
-        //show a info message
-        Toast.makeText(this, "You Are Already Register",Toast.LENGTH_SHORT).show();
+        Log.e(LOG_TAG,"Error in Register"+exc);
     }
 
 }

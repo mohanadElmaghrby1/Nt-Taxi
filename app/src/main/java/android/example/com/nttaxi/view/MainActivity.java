@@ -2,7 +2,9 @@ package android.example.com.nttaxi.view;
 
 import android.content.Intent;
 import android.example.com.nttaxi.R;
+import android.example.com.nttaxi.model.Info;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -18,24 +20,51 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     //the user email shown in navigationbar
     private TextView email_txt;
+
+    private static final String LOG_TAG=MainActivity.class.getName();
+
     private String json="{\"success\":1,\"message\":\"Login is successfull\",\"info\":[{\"id\":\"34\",\"name\":\"mohanad\",\"number\":\"123\"}]}";
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
+
+    /**
+     * GoogleApiClient wraps our service connection to Google Play Services and provides access
+     * to the user's sign in state as well as the Google's APIs.
+     */
+    protected GoogleApiClient mGoogleApiClient;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Construct a GoogleApiClient for the {@link Places#GEO_DATA_API} using AutoManage
+        // functionality, which automatically sets up the API client to handle Activity lifecycle
+        // events. If your activity does not extend FragmentActivity, make sure to call connect()
+        // and disconnect() explicitly.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, 0 /* clientId */, this)
+                .addApi(Places.GEO_DATA_API)
+                .build();
+
         setContentView(R.layout.activity_main);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -67,16 +96,20 @@ public class MainActivity extends BaseActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         //setting tha navigation header name and email
-        //getting the loogin user email
-        String loginEmail=getIntent().getExtras().getString("email");
+        //getting the loogin user email and name
+//        String loggedUSerEmail=getIntent().getExtras().getString("email");
+//        String loggedUSerName=getIntent().getExtras().getString("name");
+
+
         View view = navigationView.getHeaderView(0);
         TextView nav_email = (TextView ) view.findViewById(R.id.nav_email_txt);
-        nav_email.setText(loginEmail);
+        nav_email.setText("mail");
 
         //setting tha navigation user name
         TextView nav_name = (TextView ) view.findViewById(R.id.nav_name_text);
-        nav_name.setText("Mohanad Elmaghrby");
+        nav_name.setText("name");
 
         //setting the navigation image header
         ImageView nav_image = (ImageView)view.findViewById(R.id.nav_profile_img);
@@ -133,8 +166,17 @@ public class MainActivity extends BaseActivity
 
         } else if (id == R.id.nav_history) {
 
+            HistoryFragment historyFragment = new HistoryFragment();
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.map_content_main, historyFragment).commit();
+
+
         } else if (id == R.id.nav_manage) {
 
+        } else if (id == R.id.logout) {
+            //close the the current activity , and open login activity
+            logout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -157,6 +199,9 @@ public class MainActivity extends BaseActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.map_content_main, contactUsFragment).commit();
+
+        contactUsFragment.mGoogleApiClient=mGoogleApiClient;
+
     }
 
     @Override
@@ -169,12 +214,32 @@ public class MainActivity extends BaseActivity
                 contactUsFragment.moveCamerTo(place.getLatLng());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
-                // TODO: Handle the error.
                 Log.i("tag", status.getStatusMessage());
 
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
         }
+    }
+
+
+    /**
+     *logout from application and reset the  cashed token
+     */
+    private void logout(){
+        //set the cashed token to be none
+        Info.setUSerCashedToken(this , "none");
+
+        //start the Login Activity
+        startActivity(new Intent(MainActivity.this , LoginActivity.class));
+
+        //close the current Activity and remove from it stack
+        finish();
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

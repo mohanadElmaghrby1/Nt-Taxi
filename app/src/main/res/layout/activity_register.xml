@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/loginActvityMargin"
             android:hint="@string/phoneNumber_text_hint"
-            android:inputType="textEmailAddress" />
+            android:inputType="numberDecimal" />
 
         <EditText
             android:id="@+id/txt_email"

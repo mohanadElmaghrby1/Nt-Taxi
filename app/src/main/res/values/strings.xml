@@ -11,7 +11,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_maps">Map</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--loginActivity Strings-->
@@ -22,5 +21,9 @@
     <string name="phoneNumber_text_hint">Phone Number</string>
     <string name="Already_a_member_Login">Already a member? Login</string>
     <string name="no_account">No account yet? Create one</string>
+    <string name="unsuccesfull_login_message">Invalid Email or Password</string>
+    <string name="successfull_login_welcome_message">Welcome</string>
+    <string name="successfullu_registerd">Welcome You successfully Registered ( Enjoy :) ) </string>
+    <string name="register_email_already_used">Email Already Used</string>
 
 </resources>
